@@ -1,0 +1,28 @@
+import numpy as np
+import bisect
+
+class Solution:
+    def maxSumSubmatrix(self, matrix: List[List[int]], limit: int) -> int:
+        matrix = np.asarray(matrix, dtype = np.int)
+        h, w = matrix.shape
+        
+        best = -99999
+        for l in range(w):
+            rect = np.zeros(h)
+            for r in range(l, w):
+                rect += matrix[:, r]
+                #print(l, r)
+                #print(rect)
+                cumsum = np.cumsum(rect)
+                bis = [0]
+                for el in cumsum:
+                    idx = bisect.bisect_left(bis, el - limit)
+                    if len(bis) == 0 or idx == len(bis):
+                        pass
+                    else:
+                        score = el - bis[idx]
+                        #print(el, idx, bis[idx], score)
+                        best = max(score, best)
+                    bisect.insort_left(bis, el)
+        return int(best)
+
